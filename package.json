@@ -1,6 +1,6 @@
 {
   "name": "appeal",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "ES6 Component for making requests or appeals.",
   "main": "index.js",
   "scripts": {
@@ -34,9 +34,11 @@
   },
   "homepage": "https://github.com/FreeAllMedia/appeal",
   "dependencies": {
+    "omnirouter": "^0.1.0",
     "request": "^2.58.0"
   },
   "devDependencies": {
+  	"sinon": "^1.15.3",
     "babel": "^5.5.6",
     "chai": "^3.0.0",
     "coveralls": "^2.11.2",
