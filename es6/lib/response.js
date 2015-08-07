@@ -1,25 +1,30 @@
+let privateData = new WeakMap();
+
+let internal = function (object) {
+    if (!privateData.has(object)) {
+			privateData.set(object, {});
+		}
+    return privateData.get(object);
+};
 
 export default class Response {
 	constructor(requestResponse) {
+		internal(this)._requestResponse = requestResponse;
+		//public functions
 		Object.defineProperties(this, {
-			"_requestResponse": {
-				enumerable: false,
-				writable: false,
-				value: requestResponse
-			},
 			"status": {
 				get: () => {
-					return this._requestResponse.statusCode;
+					return internal(this)._requestResponse.statusCode;
 				}
 			},
 			"body": {
 				get: () => {
-					return this._requestResponse.body;
+					return internal(this)._requestResponse.body;
 				}
 			},
 			"headers": {
 				get: () => {
-					return this._requestResponse.headers;
+					return internal(this)._requestResponse.headers;
 				}
 			}
 		});

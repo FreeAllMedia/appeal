@@ -1,77 +1,63 @@
 const request = require("request");
-
 import Response from "./response.js";
+
+let privateData = new WeakMap();
+
+let internal = function (object) {
+    if (!privateData.has(object)) {
+			privateData.set(object, {});
+		}
+    return privateData.get(object);
+};
 
 export default class Request {
 	constructor(method) {
-		Object.defineProperties(this, {
-			"_method": {
-				enumerable: false,
-				writable: true,
-				value: method
-			},
-			"_data": {
-				enumerable: false,
-				writable: true,
-				value: null
-			},
-			"_url": {
-				enumerable: false,
-				writable: true,
-				value: null
-			},
-			"_headers": {
-				enumerable: false,
-				writable: true,
-				value: {}
-			},
-			"_json": {
-				enumerable: false,
-				writable: true,
-				value: false
-			}
-		});
+		internal(this)._method = method;
+		internal(this)._data = null;
+		internal(this)._url = null;
+		internal(this)._headers = {};
+		internal(this)._json = false;
 	}
 
 	url(url) {
-		this._url = url;
+		internal(this)._url = url;
 		return this;
 	}
 
 	data(data) {
-		this._data = data;
+		internal(this)._data = data;
 		return this;
 	}
 
 	header(key, value) {
-		this._headers[key] = value;
+		internal(this)._headers[key] = value;
 		return this;
 	}
 
 	results(callback) {
 		let options = {
-				method: this._method,
-				url: this._url,
-				headers: this._headers
+				method: internal(this)._method,
+				url: internal(this)._url,
+				headers: internal(this)._headers
 			};
 
 		//search if it's json
-		let jsonContentTypeHeader = Object.keys(this._headers).find((headerName) => {
+		let jsonContentTypeHeader = Object.keys(internal(this)._headers).find((headerName) => {
 			return (headerName.toLowerCase() === "content-type"
-				&& this._headers[headerName].indexOf("json") >= 0);
+				&& internal(this)._headers[headerName].indexOf("json") >= 0);
 		});
 
 		//infer json
 		if(jsonContentTypeHeader) {
-			this._json = true;
+			internal(this)._json = true;
 		}
 
 		//add to the appropiate option
-		if(this._data && this._json) {
-			options.json = this._data;
-		} else if(this._data) {
-			options.body = this._data;
-		} else if(this._json) {
+		if(internal(this)._data && internal(this)._json) {
+			options.json = internal(this)._data;
+		} else if(internal(this)._data) {
+			options.body = internal(this)._data;
+		} else if(internal(this)._json) {
 			options.json = {};
 		}
 
@@ -86,6 +72,7 @@ export default class Request {
 	}
 }
 
+//public static properties
 Object.defineProperties(Request, {
 	"post": {
 		get: () => {

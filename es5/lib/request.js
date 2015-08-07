@@ -16,55 +16,42 @@ var _responseJs2 = _interopRequireDefault(_responseJs);
 
 var request = require("request");
 
+var privateData = new WeakMap();
+
+var internal = function internal(object) {
+	if (!privateData.has(object)) {
+		privateData.set(object, {});
+	}
+	return privateData.get(object);
+};
+
 var Request = (function () {
 	function Request(method) {
 		_classCallCheck(this, Request);
 
-		Object.defineProperties(this, {
-			"_method": {
-				enumerable: false,
-				writable: true,
-				value: method
-			},
-			"_data": {
-				enumerable: false,
-				writable: true,
-				value: null
-			},
-			"_url": {
-				enumerable: false,
-				writable: true,
-				value: null
-			},
-			"_headers": {
-				enumerable: false,
-				writable: true,
-				value: {}
-			},
-			"_json": {
-				enumerable: false,
-				writable: true,
-				value: false
-			}
-		});
+		internal(this)._method = method;
+		internal(this)._data = null;
+		internal(this)._url = null;
+		internal(this)._headers = {};
+		internal(this)._json = false;
 	}
 
 	_createClass(Request, [{
 		key: "url",
 		value: function url(_url) {
-			this._url = _url;
+			internal(this)._url = _url;
 			return this;
 		}
 	}, {
 		key: "data",
 		value: function data(_data) {
-			this._data = _data;
+			internal(this)._data = _data;
 			return this;
 		}
 	}, {
 		key: "header",
 		value: function header(key, value) {
-			this._headers[key] = value;
+			internal(this)._headers[key] = value;
 			return this;
 		}
 	}, {
@@ -73,27 +60,27 @@ var Request = (function () {
 			var _this = this;
 
 			var options = {
-				method: this._method,
-				url: this._url,
-				headers: this._headers
+				method: internal(this)._method,
+				url: internal(this)._url,
+				headers: internal(this)._headers
 			};
 
 			//search if it's json
-			var jsonContentTypeHeader = Object.keys(this._headers).find(function (headerName) {
-				return headerName.toLowerCase() === "content-type" && _this._headers[headerName].indexOf("json") >= 0;
+			var jsonContentTypeHeader = Object.keys(internal(this)._headers).find(function (headerName) {
+				return headerName.toLowerCase() === "content-type" && internal(_this)._headers[headerName].indexOf("json") >= 0;
 			});
 
 			//infer json
 			if (jsonContentTypeHeader) {
-				this._json = true;
+				internal(this)._json = true;
 			}
 
 			//add to the appropiate option
-			if (this._data && this._json) {
-				options.json = this._data;
-			} else if (this._data) {
-				options.body = this._data;
-			} else if (this._json) {
+			if (internal(this)._data && internal(this)._json) {
+				options.json = internal(this)._data;
+			} else if (internal(this)._data) {
+				options.body = internal(this)._data;
+			} else if (internal(this)._json) {
 				options.json = {};
 			}
 
@@ -111,6 +98,7 @@ var Request = (function () {
 
 exports["default"] = Request;
 
+//public static properties
 Object.defineProperties(Request, {
 	"post": {
 		get: function get() {
