@@ -1,77 +1,58 @@
-const request = require("request");
+import request from "request";
+import privateData from "incognito";
 
 import Response from "./response.js";
 
 export default class Request {
 	constructor(method) {
-		Object.defineProperties(this, {
-			"_method": {
-				enumerable: false,
-				writable: true,
-				value: method
-			},
-			"_data": {
-				enumerable: false,
-				writable: true,
-				value: null
-			},
-			"_url": {
-				enumerable: false,
-				writable: true,
-				value: null
-			},
-			"_headers": {
-				enumerable: false,
-				writable: true,
-				value: {}
-			},
-			"_json": {
-				enumerable: false,
-				writable: true,
-				value: false
-			}
-		});
+		const _ = privateData(this);
+		_.method = method;
+		_.data = null;
+		_.url = null;
+		_.headers = {};
+		_.json = false;
 	}
 
 	url(url) {
-		this._url = url;
+		privateData(this).url = url;
 		return this;
 	}
 
 	data(data) {
-		this._data = data;
+		privateData(this).data = data;
 		return this;
 	}
 
 	header(key, value) {
-		this._headers[key] = value;
+		privateData(this).headers[key] = value;
 		return this;
 	}
 
 	results(callback) {
+		const _ = privateData(this);
 		let options = {
-				method: this._method,
-				url: this._url,
-				headers: this._headers
+				method: _.method,
+				url: _.url,
+				headers: _.headers
 			};
 
 		//search if it's json
-		let jsonContentTypeHeader = Object.keys(this._headers).find((headerName) => {
+		let jsonContentTypeHeader = Object.keys(_.headers).find((headerName) => {
 			return (headerName.toLowerCase() === "content-type"
-				&& this._headers[headerName].indexOf("json") >= 0);
+				&& _.headers[headerName].indexOf("json") >= 0);
 		});
 
 		//infer json
 		if(jsonContentTypeHeader) {
-			this._json = true;
+			_.json = true;
 		}
 
 		//add to the appropiate option
-		if(this._data && this._json) {
-			options.json = this._data;
-		} else if(this._data) {
-			options.body = this._data;
-		} else if(this._json) {
+		if(_.data && _.json) {
+			options.json = _.data;
+		} else if(_.data) {
+			options.body = _.data;
+		} else if(_.json) {
 			options.json = {};
 		}
 
