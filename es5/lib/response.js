@@ -4,37 +4,33 @@ Object.defineProperty(exports, "__esModule", {
 	value: true
 });
 
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var privateData = new WeakMap();
+var _incognito = require("incognito");
 
-var internal = function internal(object) {
-	if (!privateData.has(object)) {
-		privateData.set(object, {});
-	}
-	return privateData.get(object);
-};
+var _incognito2 = _interopRequireDefault(_incognito);
 
 var Response = function Response(requestResponse) {
-	var _this = this;
-
 	_classCallCheck(this, Response);
 
-	internal(this)._requestResponse = requestResponse;
+	var _ = (0, _incognito2["default"])(this);
+	_.requestResponse = requestResponse;
 	Object.defineProperties(this, {
 		"status": {
 			get: function get() {
-				return internal(_this)._requestResponse.statusCode;
+				return _.requestResponse.statusCode;
 			}
 		},
 		"body": {
 			get: function get() {
-				return internal(_this)._requestResponse.body;
+				return _.requestResponse.body;
 			}
 		},
 		"headers": {
 			get: function get() {
-				return internal(_this)._requestResponse.headers;
+				return _.requestResponse.headers;
 			}
 		}
 	});

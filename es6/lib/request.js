@@ -1,63 +1,58 @@
-const request = require("request");
+import request from "request";
+import privateData from "incognito";
+
 import Response from "./response.js";
-
-let privateData = new WeakMap();
-
-let internal = function (object) {
-    if (!privateData.has(object)) {
-			privateData.set(object, {});
-		}
-    return privateData.get(object);
-};
 
 export default class Request {
 	constructor(method) {
-		internal(this)._method = method;
-		internal(this)._data = null;
-		internal(this)._url = null;
-		internal(this)._headers = {};
-		internal(this)._json = false;
+		const _ = privateData(this);
+		_.method = method;
+		_.data = null;
+		_.url = null;
+		_.headers = {};
+		_.json = false;
 	}
 
 	url(url) {
-		internal(this)._url = url;
+		privateData(this).url = url;
 		return this;
 	}
 
 	data(data) {
-		internal(this)._data = data;
+		privateData(this).data = data;
 		return this;
 	}
 
 	header(key, value) {
-		internal(this)._headers[key] = value;
+		privateData(this).headers[key] = value;
 		return this;
 	}
 
 	results(callback) {
+		const _ = privateData(this);
 		let options = {
-				method: internal(this)._method,
-				url: internal(this)._url,
-				headers: internal(this)._headers
+				method: _.method,
+				url: _.url,
+				headers: _.headers
 			};
 
 		//search if it's json
-		let jsonContentTypeHeader = Object.keys(internal(this)._headers).find((headerName) => {
+		let jsonContentTypeHeader = Object.keys(_.headers).find((headerName) => {
 			return (headerName.toLowerCase() === "content-type"
-				&& internal(this)._headers[headerName].indexOf("json") >= 0);
+				&& _.headers[headerName].indexOf("json") >= 0);
 		});
 
 		//infer json
 		if(jsonContentTypeHeader) {
-			internal(this)._json = true;
+			_.json = true;
 		}
 
 		//add to the appropiate option
-		if(internal(this)._data && internal(this)._json) {
-			options.json = internal(this)._data;
-		} else if(internal(this)._data) {
-			options.body = internal(this)._data;
-		} else if(internal(this)._json) {
+		if(_.data && _.json) {
+			options.json = _.data;
+		} else if(_.data) {
+			options.body = _.data;
+		} else if(_.json) {
 			options.json = {};
 		}
 
@@ -72,7 +67,6 @@ export default class Request {
 	}
 }
 
-//public static properties
 Object.defineProperties(Request, {
 	"post": {
 		get: () => {

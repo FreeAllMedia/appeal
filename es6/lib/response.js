@@ -1,30 +1,23 @@
-let privateData = new WeakMap();
-
-let internal = function (object) {
-    if (!privateData.has(object)) {
-			privateData.set(object, {});
-		}
-    return privateData.get(object);
-};
+import privateData from "incognito";
 
 export default class Response {
 	constructor(requestResponse) {
-		internal(this)._requestResponse = requestResponse;
-		//public functions
+		const _ = privateData(this);
+		_.requestResponse = requestResponse;
 		Object.defineProperties(this, {
 			"status": {
 				get: () => {
-					return internal(this)._requestResponse.statusCode;
+					return _.requestResponse.statusCode;
 				}
 			},
 			"body": {
 				get: () => {
-					return internal(this)._requestResponse.body;
+					return _.requestResponse.body;
 				}
 			},
 			"headers": {
 				get: () => {
-					return internal(this)._requestResponse.headers;
+					return _.requestResponse.headers;
 				}
 			}
 		});
