@@ -34,6 +34,7 @@
   },
   "homepage": "https://github.com/FreeAllMedia/appeal",
   "dependencies": {
+    "incognito": "^0.1.2",
     "omnirouter": "^0.1.0",
     "request": "^2.58.0"
   },

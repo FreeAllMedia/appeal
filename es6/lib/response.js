@@ -1,25 +1,23 @@
+import privateData from "incognito";
 
 export default class Response {
 	constructor(requestResponse) {
+		const _ = privateData(this);
+		_.requestResponse = requestResponse;
 		Object.defineProperties(this, {
-			"_requestResponse": {
-				enumerable: false,
-				writable: false,
-				value: requestResponse
-			},
 			"status": {
 				get: () => {
-					return this._requestResponse.statusCode;
+					return _.requestResponse.statusCode;
 				}
 			},
 			"body": {
 				get: () => {
-					return this._requestResponse.body;
+					return _.requestResponse.body;
 				}
 			},
 			"headers": {
 				get: () => {
-					return this._requestResponse.headers;
+					return _.requestResponse.headers;
 				}
 			}
 		});
