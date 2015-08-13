@@ -1,6 +1,6 @@
 {
   "name": "appeal",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "ES6 Component for making requests or appeals.",
   "main": "index.js",
   "scripts": {
